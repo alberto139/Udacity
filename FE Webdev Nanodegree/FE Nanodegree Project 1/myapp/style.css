@@ -1,0 +1,40 @@
+
+*{
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+}
+
+<!-
+*{
+	outline: 1px solid red !important;
+}
+-->
+
+.header {
+	background-color: #33BEBE;
+	margin-bottom: 25px;
+	padding-top: 40px;
+	padding-left: 20px;
+	
+	font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Geneva, Verdana, sans-serif;
+	font-size: 40px;
+	color: white;
+
+}
+
+.image {
+	max-width: 460px;
+	margin-right: 25px
+}
+
+.description{
+	max-width: 705px;
+	color: #7C8B88;
+	overflow: auto;
+}
+
+.app {
+    display: -webkit-flex;
+    display: flex;
+}

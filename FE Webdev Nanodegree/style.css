@@ -1,0 +1,18 @@
+.description{
+	color: red;
+}
+
+element.style{
+
+}
+
+.app {
+    display: -webkit-flex;
+    display: flex;
+}
+
+*{
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+}
