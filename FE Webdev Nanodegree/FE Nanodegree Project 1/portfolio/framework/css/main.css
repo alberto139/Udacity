@@ -8,7 +8,6 @@
 	-moz-box-sizing: border-box;
 	-ms-box-sizing: border-box;
 	box-sizing: border-box;
-	outline: 1px solid red !important;
 	font-family: "Lato", sans-serif;
 }
 
@@ -27,8 +26,8 @@
 }
 
 .grid {
-    width : 100%;
-    max-width : 1800px; 
+	width : 100%;
+	max-width : 1800px; 
 }
 
 h1 {
@@ -133,24 +132,23 @@ p {
 	width: 100%;
 }
 
-@media only screen and (max-width: 500px) {
+@media only screen and (max-width: 575px) {
 
-
-
-	h1{
+	h1 {
 		font-size: 2.5em;
 	}
-	h3{
+	h3 {
 		font-size: 1em;
 	}
-}
+	h4 {
+		font-size: 1.5em;
+	}
+	
+	.row {
+		flex-direction: column;
+	}
 
-@media screen and (max-width: 575px) {
-    .row {
-              flex-direction: column;
-       }
-
-      .col-4 {
-              width: 100%;
-       }
+	.col-4 {
+		width: 100%;
+	}
 }
