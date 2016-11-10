@@ -1,0 +1,12 @@
+#Questions
+
+QUESTION: Observe what you see with the agent's behavior as it takes random actions. Does the smartcab eventually make it to the destination? Are there any other interesting observations to note?
+
+The smartcab does not eventually make it to the destination in the test that I observed. While I assume that given enough time the smartcab would eventually reach the goal by pure chance. I also observed what seems to be a "pac-man" like behaviour. That is, once the smartcar wants to continue past the boundary of the map, it appears on the other side. 
+
+QUESTION: What states have you identified that are appropriate for modeling the smartcab and environment? Why do you believe each of these states to be appropriate for this problem?
+
+OPTIONAL: How many states in total exist for the smartcab in this environment? Does this number seem reasonable given that the goal of Q-Learning is to learn and make informed decisions about each state? Why or why not?
+
+The grid is an 6 * 8 matrix, there fore it has 48 total states. This number does seem reasonable for Q-Learning since keeping track of 48 states should not be too demanding of storage or computational power. 
+

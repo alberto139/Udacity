@@ -1,0 +1,18 @@
+// Q-function
+
+<s, a, r, s'>
+
+s - current states
+a - action
+r - reward
+s' - new state
+
+alpha - learning rate. should be between 0 and 1. 1/2 average. Changes, decreases over time?
+gama - discount to the value of the next step
+
+Have a Q dictionary wich hold the states and the best_action
+
+Q(State,action) <- alpha * (immediate reward) + discounted value of the next state ()
+Q -value? 
+
+r 
