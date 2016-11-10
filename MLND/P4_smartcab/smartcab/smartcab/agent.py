@@ -1,40 +1,42 @@
 import random
+from random import randint
+import time
 from environment import Agent, Environment
 from planner import RoutePlanner
 from simulator import Simulator
-from collections import defaultdict
 
 class LearningAgent(Agent):
     """An agent that learns to drive in the smartcab world."""
 
     def __init__(self, env):
         super(LearningAgent, self).__init__(env)  # sets self.env = env, state = None, next_waypoint = None, and a default color
-        self.color = 'black'  # override color
+        self.color = 'red'  # override color
         self.planner = RoutePlanner(self.env, self)  # simple route planner to get next_waypoint
-        self.valid_actions = Environment.valid_actions
+        # TODO: Initialize any additional variables here
 
-        # Intializing previous action, state, reward.
-        self.prev_action = None
-        self.prev_state = None
-        self.prev_reward = None
-        
-        #initialize the Q_table
-        self.Q = {}
-
-        #Parameters for Q-Learning
-        self.alpha = 0.85  #learning rate
-        self.gamma = 0.45  # discount rate
-        self.epsilon = 0.001 #exploration rate
+        # Initialize variables for Q-learning <s, a, r, s'>
+        self.state = None
+        self.action = None
+        self.reward = None
         self.default_Q = 10
+        self.last_state = None
+        self.last_action = None
+        self.last_reward = None
+        self.alpha = 0.85
+        self.gamma = 0.45
+        
+        self.Q = {} # Q dictionary
 
     def reset(self, destination=None):
         self.planner.route_to(destination)
         # TODO: Prepare for a new trip; reset any variables here, if required
         self.state = None
+        self.action = None
+        self.reward = None
+        self.last_state = None
+        self.last_action = None
+        self.last_reward = None
         self.next_waypoint = None
-        self.prev_action = None
-        self.prev_state = None
-        self.prev_reward = None
 
     def update(self, t):
         # Gather inputs
@@ -42,53 +44,61 @@ class LearningAgent(Agent):
         inputs = self.env.sense(self)
         deadline = self.env.get_deadline(self)
 
-        #Update inputs to include all relevant variables (next_waypoint, status, light, left)
-        inputs['waypoint'] = self.next_waypoint
+        # TODO: Update state
+        inputs["Waypoint"] = self.next_waypoint
         del inputs['right']
-
-        #Convert dictionary values of inputs into tuple to reflect state
         self.state = inputs
         state = tuple(inputs.values())
-        
-        # TODO: Select action according to your policy
-        best_action = None
-        
-        #Exploration
-        if random.random() <= self.epsilon: # If random is less than 0.001
-            best_action = random.choice(self.valid_actions)
-            if (state, best_action) not in self.Q.keys():
-                self.Q[(state, best_action)] = self.default_Q
-            Q_value = self.Q[(state, best_action)] # Set the q values of the state to
-        
-        else:
-            Q_values = []
-            for action in self.valid_actions:
-                if (state, action) not in self.Q.keys():
-                    self.Q[(state, action)] = self.default_Q
-                Q_values.append(self.Q[(state, action)])
 
-            #Find best_action and Q_value
-            max_Q = max(Q_values)
-            index = []
-            for i, x in enumerate(Q_values):
-                if x == max(Q_values):
-                    index.append(i)
-            i = random.choice(index)
-            best_action = self.valid_actions[i]
-            Q_value = Q_values[i]
+
+        # TODO: Select action according to your policy
+
+        #Random Action
+        posible_actions = [None, 'forward', 'left', 'right']
+    
+        #action = random.choice(posible_actions)
 
         # Execute action and get reward
+        reward = self.env.act(self, None)
+        best_action = None
+
+        # Set the best action to that which has the best reward
+        #for element in posible_actions:
+        #    if reward < self.env.act(self, element):
+        #        best_action = element
+        #        reward = self.env.act(self, element)
+
+        # Initialize all Q values for the state
+        Q_vals = []
+        for action in posible_actions:
+            if (state, action) not in self.Q.keys():
+                self.Q[(state, action)] = self.default_Q
+            Q_vals.append(self.Q[(state, action)])
+
+        #Find the best action
+        best_actions = []
+        max_Q_val = max(Q_vals)
+        for i, val in enumerate(Q_vals):
+            if val == max_Q_val:
+                best_actions.append(posible_actions[i])
+
+        i = randint(0, len(best_actions) - 1)     
+        best_action = best_actions[i]
+        Q_val = Q_vals[i]
         action = best_action
         reward = self.env.act(self, action)
 
         # TODO: Learn policy based on state, action, reward
-        if self.prev_state != None:
-            self.Q[(self.prev_state,self.prev_action)] = (1-self.alpha)*self.Q[(self.prev_state,self.prev_action)] + self.alpha*(self.prev_reward + self.gamma*(self.Q[(state, action)]))
+       # print "\n The Last : " + str(self.last_state) + "\n"
 
-        #Update previous state, action, and reward
-        self.prev_action = action
-        self.prev_state = state
-        self.prev_reward = reward
+        if self.last_state != None and self.last_action != None: 
+       #     self.Q[ (self.last_state, self.last_action) ] = (1-self.alpha) 
+            self.Q[(self.last_state, self.last_action)] = (1-self.alpha) * self.Q[(self.last_state, self.last_action)] + self.alpha * (self.last_reward + self.gamma * (self.Q[(state, action)]))
+
+
+        self.last_state =  state
+        self.last_action = action
+        self.last_reward = reward
 
         print "LearningAgent.update(): deadline = {}, inputs = {}, action = {}, reward = {}".format(deadline, inputs, action, reward)  # [debug]
 
@@ -103,15 +113,12 @@ def run():
     # NOTE: You can set enforce_deadline=False while debugging to allow longer trials
 
     # Now simulate it
-    sim = Simulator(e, update_delay=0.0000001, display=True)  # create simulator (uses pygame when display=True, if available)
+    sim = Simulator(e, update_delay=0.01, display=True)  # create simulator (uses pygame when display=True, if available)
     # NOTE: To speed up simulation, reduce update_delay and/or set display=False
 
-    sim.run(n_trials=1)  # run for a specified number of trials
+    sim.run(n_trials=100)  # run for a specified number of trials
     # NOTE: To quit midway, press Esc or close pygame window, or hit Ctrl+C on the command-line
-
-
 
 
 if __name__ == '__main__':
     run()
-

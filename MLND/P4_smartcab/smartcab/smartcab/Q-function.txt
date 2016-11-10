@@ -15,4 +15,4 @@ Have a Q dictionary wich hold the states and the best_action
 Q(State,action) <- alpha * (immediate reward) + discounted value of the next state ()
 Q -value? 
 
-r 
+ https://zoom.us/j/5215914390
