@@ -18,12 +18,12 @@ class LearningAgent(Agent):
         self.state = None
         self.action = None
         self.reward = None
-        self.default_Q = 10
+        self.default_Q = 2 # change to lower
         self.last_state = None
         self.last_action = None
         self.last_reward = None
-        self.alpha = 0.85
-        self.gamma = 0.45
+        self.alpha = 1
+        self.gamma = .1
         
         self.Q = {} # Q dictionary
 
@@ -46,7 +46,7 @@ class LearningAgent(Agent):
 
         # TODO: Update state
         inputs["Waypoint"] = self.next_waypoint
-        del inputs['right']
+        del inputs['right'] #important for right forward if the is something
         self.state = inputs
         state = tuple(inputs.values())
 
@@ -76,6 +76,10 @@ class LearningAgent(Agent):
             Q_vals.append(self.Q[(state, action)])
 
         #Find the best action
+        # Find max Q value for a particular state. Make into a function. Check highest Q value corresponding to that state
+        # that also takes in state
+
+        # USe the state to pick the best action> Initialize best action with some random action
         best_actions = []
         max_Q_val = max(Q_vals)
         for i, val in enumerate(Q_vals):
@@ -85,7 +89,7 @@ class LearningAgent(Agent):
         i = randint(0, len(best_actions) - 1)     
         best_action = best_actions[i]
         Q_val = Q_vals[i]
-        action = best_action
+        #action = best_action
         reward = self.env.act(self, action)
 
         # TODO: Learn policy based on state, action, reward
@@ -113,7 +117,7 @@ def run():
     # NOTE: You can set enforce_deadline=False while debugging to allow longer trials
 
     # Now simulate it
-    sim = Simulator(e, update_delay=0.01, display=True)  # create simulator (uses pygame when display=True, if available)
+    sim = Simulator(e, update_delay=0, display=False)  # create simulator (uses pygame when display=True, if available)
     # NOTE: To speed up simulation, reduce update_delay and/or set display=False
 
     sim.run(n_trials=100)  # run for a specified number of trials
