@@ -13,7 +13,7 @@ class LearningAgent(Agent):
     """ An agent that learns to drive in the Smartcab world.
         This is the object you will be modifying. """ 
 
-    def __init__(self, env, learning=False, epsilon=1.0, alpha=0.95):
+    def __init__(self, env, learning=False, epsilon=1.0, alpha=0.5):
         super(LearningAgent, self).__init__(env)     # Set the agent in the evironment 
         self.planner = RoutePlanner(self.env, self)  # Create a route planner
         self.valid_actions = self.env.valid_actions  # The set of valid actions
@@ -57,7 +57,9 @@ class LearningAgent(Agent):
             self.alpha = 0
             self.epsilon = 0
         else:
-            self.epsilon = self.alpha ** self.n_trial # Decaying Epsilon 
+            #self.epsilon = self.epsilon - 0.05 # Old Epsilon Decay
+            #self.epsilon = self.alpha ** self.n_trial # Decaying Epsilon 
+            self.epsilon = self.epsilon * .99
 
         self.gamma = 0           # Discount factor
         self.prev_state = None   # State the agent was in previously
@@ -169,6 +171,7 @@ class LearningAgent(Agent):
         print "The action taken was: " + str(action)
         #print "Dictionary\n"
         #print self.Q
+        #action = self.next_waypoint
         return action
 
 
@@ -222,7 +225,7 @@ def run():
     #   learning   - set to True to force the driving agent to use Q-learning
     #    * epsilon - continuous value for the exploration factor, default is 1
     #    * alpha   - continuous value for the learning rate, default is 0.5
-    agent = env.create_agent(LearningAgent, learning = True, alpha = 0.95)
+    agent = env.create_agent(LearningAgent, learning = True, alpha = 0.66, epsilon = 1.0)
     
     ##############
     # Follow the driving agent
@@ -243,8 +246,8 @@ def run():
     # Run the simulator
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
-    #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run(tolerance = 0.005, n_test = 10)
+    #   n_test     - discrete number of testing trials to perform, default is 0S
+    sim.run(tolerance = 0.005, n_test = 100)
     #toleracne = 0.0005, alpha = 0.5, epsilon 1, decay *= 95 = 104 Trials
 
 
