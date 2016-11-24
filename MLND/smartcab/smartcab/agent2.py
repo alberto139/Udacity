@@ -1,4 +1,5 @@
 # python -m smartcab.agent
+# attempt 2
 import random
 import math
 from environment import Agent, Environment
@@ -63,8 +64,8 @@ class LearningAgent(Agent):
             #self.epsilon = self.epsilon * .98
             #self.epsilon = (200 - 1.05**self.n_trial)
             #self.epsilon = 1/(math.pow(self.n_trial,1/1.1)) # bad
-            # 1-.99e^(-e^(-0.03(x-100)))  THIS SHOULD WORK
-            self.epsilon = 1 - 0.99 * math.e ** ( -math.e ** (-0.03 *(self.n_trial - 150)))
+            # 1-.99e^(-e^(-0.008(x-400))) THIS SHOULD WORK
+            self.epsilon = 1 - 0.99 * math.e ** ( -math.e ** (-0.008 *(self.n_trial - 400)))
             #self.aplha = .5 - 0.99 * math.e ** ( -math.e ** (-0.07 *(self.n_trial - 150)))
 
         self.gamma = 0           # Discount factor
@@ -113,18 +114,15 @@ class LearningAgent(Agent):
         ###########
         # Calculate the maximum Q-value of all actions for a given state
         maxQ_action = None
-        maxQ_value = 0
+        maxQ_value = []
 
 
         if state in self.Q: #Check that the state is in the dictionary
             maxQ_action = max(self.Q[state])
-            for actions in self.valid_actions:
-                if maxQ_value < self.Q[state][actions]:
-                    maxQ_value = self.Q[state][actions]
-            #maxQ_value.append(self.Q[state][maxQ_action])
+            maxQ_value.append(self.Q[state][maxQ_action])
 
-        print "MAX_Q: " + str(maxQ_value)
-        return maxQ_value
+
+        return random.choice(maxQ_value)
 
 
     def createQ(self, state):
@@ -202,8 +200,7 @@ class LearningAgent(Agent):
 
         if (self.learning):
            # self.Q[state][action] = (1-self.alpha) * self.Q[state][action] + self.alpha * reward 
-           # self.Q[state][action] = (1-self.alpha) * self.Q[state][action] + (reward*self.alpha)
-           self.Q[state][action] = (1-self.alpha) * self.Q[state][action] + (self.alpha) * ( reward  + self.get_maxQ(next_state))
+            self.Q[state][action] = (1-self.alpha) * self.Q[state][action] + self.alpha * ( reward  + self.get_maxQ(next_state))
 
 
         return
@@ -242,7 +239,7 @@ def run():
     #   learning   - set to True to force the driving agent to use Q-learning
     #    * epsilon - continuous value for the exploration factor, default is 1
     #    * alpha   - continuous value for the learning rate, default is 0.5
-    agent = env.create_agent(LearningAgent, learning = True, alpha = 0.10, epsilon = 1.0)
+    agent = env.create_agent(LearningAgent, learning = True, alpha = 0.5, epsilon = 1.0)
     
     ##############
     # Follow the driving agent
@@ -264,7 +261,7 @@ def run():
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
     #   n_test     - discrete number of testing trials to perform, default is 0S
-    sim.run(tolerance = 0.015, n_test = 20)
+    sim.run(tolerance = 0.018, n_test = 20)
     #toleracne = 0.0005, alpha = 0.5, epsilon 1, decay *= 95 = 104 Trials
 
 # Tests for Alpha
@@ -274,10 +271,6 @@ def run():
 # 0.3  F F
 # 0.5  F F
 # 0.9  F F
-
-# New Test:
-# 0.98 D F
-
 
 
 if __name__ == '__main__':
